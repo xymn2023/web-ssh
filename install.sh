@@ -65,7 +65,7 @@ install_system_deps() {
     
     if [[ "$SYSTEM_TYPE" == "debian" ]]; then
         sudo apt-get update
-        sudo apt-get update && sudo apt-get install -y python3-venv && ./install.sh
+        sudo apt-get install -y build-essential libssl-dev libffi-dev python3-dev python3-pip python3-venv git curl
     elif [[ "$SYSTEM_TYPE" == "redhat" ]]; then
         sudo yum update -y
         sudo yum groupinstall -y "Development Tools"
