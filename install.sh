@@ -76,6 +76,14 @@ install_system_deps() {
     fi
     
     log_success "系统依赖安装完成"
+    
+    # 升级 pip 和 setuptools
+    log_info "升级 Python 包管理工具..."
+    python3 -m pip install --upgrade pip setuptools wheel
+    
+    # 预安装关键依赖
+    log_info "预安装关键 Python 依赖..."
+    python3 -m pip install --upgrade cffi pynacl cryptography
 }
 
 # 检查 Python 版本
