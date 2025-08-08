@@ -52,4 +52,4 @@ Finished processing dependencies for webssh==1.6.3
 
 ```
 
-那就说明项目安装好了，可自行选择使用说明进行启动，需要进入webssh目录执行启动命令。
+那就说明项目安装好了，可自行选择使用说明进行启动，需要跟install.sh同一目录执行启动命令。
