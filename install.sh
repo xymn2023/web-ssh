@@ -77,13 +77,21 @@ install_system_deps() {
     
     log_success "系统依赖安装完成"
     
-    # 升级 pip 和 setuptools
+    # 升级 pip 和 setuptools（使用错误处理）
     log_info "升级 Python 包管理工具..."
-    python3 -m pip install --upgrade pip setuptools wheel
+    if python3 -m pip install --upgrade pip setuptools wheel; then
+        log_success "Python 包管理工具升级完成"
+    else
+        log_warning "Python 包管理工具升级失败，继续执行..."
+    fi
     
-    # 预安装关键依赖
+    # 预安装关键依赖（使用错误处理）
     log_info "预安装关键 Python 依赖..."
-    python3 -m pip install --upgrade cffi pynacl cryptography
+    if python3 -m pip install --upgrade cffi pynacl cryptography; then
+        log_success "Python 依赖预安装完成"
+    else
+        log_warning "Python 依赖预安装失败，将在虚拟环境中重新安装..."
+    fi
 }
 
 # 检查 Python 版本
@@ -176,12 +184,23 @@ install_webssh() {
     fi
     
     if [[ ! -d "../webssh_venv" ]]; then
-        python3 -m venv ../webssh_venv
-        if [[ $? -ne 0 ]]; then
-            log_error "虚拟环境创建失败"
-            exit 1
+        if python3 -m venv ../webssh_venv; then
+            log_success "虚拟环境创建完成"
+        else
+            log_error "虚拟环境创建失败，请确保已安装 python3-venv 包"
+            log_info "尝试安装 python3-venv..."
+            if [[ "$SYSTEM_TYPE" == "debian" ]]; then
+                sudo apt-get install -y python3-venv
+            elif [[ "$SYSTEM_TYPE" == "redhat" ]]; then
+                sudo yum install -y python3-venv
+            fi
+            if python3 -m venv ../webssh_venv; then
+                log_success "虚拟环境创建完成"
+            else
+                log_error "虚拟环境创建仍然失败，退出安装"
+                exit 1
+            fi
         fi
-        log_success "虚拟环境创建完成"
     fi
     
     # 激活虚拟环境
@@ -189,17 +208,24 @@ install_webssh() {
     source ../webssh_venv/bin/activate
     
     # 升级 pip
-    pip install --upgrade pip setuptools wheel
+    if pip install --upgrade pip setuptools wheel; then
+        log_success "虚拟环境 pip 升级完成"
+    else
+        log_warning "虚拟环境 pip 升级失败，继续执行..."
+    fi
     
     # 安装特定版本的依赖
     log_info "安装特定版本的依赖..."
-    pip install cffi==1.15.1 pynacl==1.5.0 cryptography==41.0.7
+    if pip install cffi==1.15.1 pynacl==1.5.0 cryptography==41.0.7; then
+        log_success "依赖安装完成"
+    else
+        log_error "依赖安装失败"
+        exit 1
+    fi
     
     # 安装 WebSSH
     log_info "安装 WebSSH Python 包..."
-    pip install -e .
-    
-    if [[ $? -eq 0 ]]; then
+    if pip install -e .; then
         log_success "WebSSH 安装完成"
     else
         log_error "WebSSH 安装失败"
