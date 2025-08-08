@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# WebSSH 安装脚本
+# WebSSH 安装脚本 (修复版本)
 # 作者: 基于用户需求创建
 # 描述: 自动化安装和配置 WebSSH 服务
 
@@ -112,29 +112,6 @@ check_python() {
     else
         log_error "未找到 Python3，请先安装 Python3"
         exit 1
-    fi
-}
-
-# 检查端口是否被占用
-check_port() {
-    local port=$1
-    if command -v lsof &> /dev/null; then
-        if lsof -i:$port &> /dev/null; then
-            log_warning "端口 $port 已被占用"
-            lsof -i:$port
-            read -p "是否要终止占用端口的进程? (y/N): " -n 1 -r
-            echo
-            if [[ $REPLY =~ ^[Yy]$ ]]; then
-                local pid=$(lsof -ti:$port)
-                if [[ -n "$pid" ]]; then
-                    sudo kill -9 $pid
-                    log_success "已终止占用端口 $port 的进程"
-                fi
-            else
-                log_error "请手动释放端口 $port 后重试"
-                exit 1
-            fi
-        fi
     fi
 }
 
@@ -353,7 +330,7 @@ show_usage() {
 # 主函数
 main() {
     echo "=========================================="
-    echo "           WebSSH 安装脚本"
+    echo "           WebSSH 安装脚本 (修复版)"
     echo "=========================================="
     echo
     
