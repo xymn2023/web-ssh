@@ -14,6 +14,8 @@ https://github.com/huashengdun/webssh
 
 ## 推荐安装 ##
 
+建议自建一个目录再来运行一键命令。
+
 **一键命令**
 
 ```
